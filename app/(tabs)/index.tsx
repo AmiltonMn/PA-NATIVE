@@ -3,7 +3,7 @@ import { StyleSheet, Text } from 'react-native';
 export default function HomeScreen() {
   return (
     <>
-      <Text>Turma mara</Text>
+      <Text>INDEX DAS TABS</Text>
     </>
   );
 }

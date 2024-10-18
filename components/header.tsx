@@ -28,6 +28,7 @@ const style = StyleSheet.create({
     textStyle: {
         color: "#ffffff",
         fontSize: 30,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        fontFamily: "Inter"
     }
 })

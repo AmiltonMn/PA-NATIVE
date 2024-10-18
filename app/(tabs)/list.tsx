@@ -1,5 +1,5 @@
 import { FlatList, SafeAreaView, Text, StyleSheet } from "react-native"
-import DATA from "@/constants/dataEx.json"
+import DATA from "@/constants/data.json"
 import { Item } from "@/components/item";
 
 export default function List() {
@@ -10,7 +10,7 @@ export default function List() {
                 <FlatList
                     style={styles.back}
                     data={DATA}
-                    renderItem={({ item }) => <Item nome={item.nome} idade={item.idade} data={item.data} />}
+                    renderItem={({ item }) => <Item nome={item.nome} idade={item.idade} data={item.data} image={item.imagem}/>}
                     keyExtractor={item => item.id}
                 />
             </SafeAreaView>
