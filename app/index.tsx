@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
-import { Link, router, useNavigation } from "expo-router";
+import { Link, router } from "expo-router";
 import { View, TouchableOpacity, Text, TextInput, SafeAreaView, StyleSheet, Easing, Alert } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { Image, ImageSource } from "expo-image"
+import { Image } from "expo-image"
 import { FIREBASE_AUTH } from "@/firebaseConfig";
 import Logo from "@/assets/images/SpotifyLogo.png"
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { rgbaColor } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 
 
 export default function Login() {
 
-    const sv = useSharedValue(10)
-
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
-    var [borderBottomColor, setBorderColorLogin] = useState('')
+    var [focused, setFocused] = useState(true)
+
+    state: {
+        isFocused: true
+    }
 
     const auth = FIREBASE_AUTH;
 
@@ -27,16 +27,15 @@ export default function Login() {
         console.log(email, pass)
     }, [email, pass]);
 
-    const config = {
-        duration: 500,
-        easing: Easing.bezier(0.5, 0.01, 0, 1)
-    };
-
     const signIn = () => {
         signInWithEmailAndPassword(auth, email, pass)
         .then((dadosUsuario) => {
             console.log(dadosUsuario);
-            router.push('/(tabs)')
+            if (email == "admin@adm.adm" && pass == "adm1234") {
+                router.push('/(adm)')
+            } else {
+                router.push('/(loja)')
+            }
         }).catch((err) => {
             alert(err.message);
         });
@@ -49,13 +48,7 @@ export default function Login() {
                 <Image source={Logo} style={styles.imageStyle}></Image>
                 <View style={styles.buttons}>
                     <View style={[styles.loginBttn]}>
-                        <Animated.View style={{
-                            borderBottomColor,
-                        }} />
-                        <Text style={styles.whiteText} onPress={() => {
-                            sv.value = sv.value + 20;
-                        }}>Log In</Text>
-                        
+                        <Text style={styles.whiteText}>Log In</Text>
                     </View>
 
                     <View style={styles.regButton}>
@@ -69,14 +62,19 @@ export default function Login() {
                     <TextInput
                         style={styles.input}
                         onChangeText={setEmail}
-                        value={email}        
+                        value={email}
+                        placeholder="Digiteu seu E-mail"
+                        placeholderTextColor="#929394"
+                        onFocus={() => setFocused(true)}
                     />
 
                     <TextInput
                         style={styles.input}
                         onChangeText={setPass}
                         value={pass}
-                        
+                        placeholder="Digite sua senha"
+                        placeholderTextColor="#929394"
+                        secureTextEntry
                     />
                     <TouchableOpacity style={styles.button} onPress={signIn}>
                         <Text style={styles.bttnText}>Logar</Text>
@@ -99,7 +97,8 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 50,
         width: '100%',
-        color: 'white'
+        color: 'white',
+            
     },
 
     inputs: {

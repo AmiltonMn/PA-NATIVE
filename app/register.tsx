@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, router, useNavigation } from "expo-router";
-import { View, TouchableOpacity, Text, TextInput, SafeAreaView, StyleSheet, Easing, Alert } from "react-native";
+import { View, TouchableOpacity, Text, TextInput, SafeAreaView, StyleSheet, Easing, Alert, Modal, Pressable } from "react-native";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { Image, ImageSource } from "expo-image"
 import { FIREBASE_AUTH } from "@/firebaseConfig";
@@ -14,6 +14,7 @@ export default function Login() {
     const sv = useSharedValue(10)
 
     const [email, setEmail] = useState('')
+    const [modalVisible, setModalVisible] = useState(false);
     const [pass, setPass] = useState('')
     const [confirmPass, setConfirmPass] = useState('')
     var [borderBottomColor, setBorderColorLogin] = useState('')
@@ -38,7 +39,7 @@ export default function Login() {
             createUserWithEmailAndPassword(auth, email, pass)   
             .then((dadosUsuario) => {
                 console.log(dadosUsuario)
-                Alert.alert("Cadastrado com sucesso!")
+                setModalVisible(true);
             }).catch((err) => {
                 alert(err.message);
             });
@@ -50,6 +51,25 @@ export default function Login() {
     return (
         <>
             <SafeAreaView style={styles.pageStyle}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setModalVisible(!modalVisible);
+                }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Usuário cadastrado com sucesso!</Text>
+                            <Pressable
+                                style={[styles.button, styles.closeButton]}
+                                onPress={() => setModalVisible(!modalVisible)}>
+                                <Text>Fechar</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
                 
                 <Image source={Logo} style={styles.imageStyle}></Image>
                 <View style={styles.buttons}>
@@ -126,6 +146,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 50,
     },
+    buttonOpen: {
+        backgroundColor: '#F194FF',
+    },
 
     loginBttn: {
         borderBottomStartRadius: 0,
@@ -172,4 +195,36 @@ const styles = StyleSheet.create({
         height: 150,
         resizeMode: 'contain'
     },
+
+    // Styles do modal
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+
+    closeButton: {
+        backgroundColor: "#FFFFFF00"
+    }
 })
