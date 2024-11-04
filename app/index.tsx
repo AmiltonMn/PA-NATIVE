@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, router } from "expo-router";
-import { View, TouchableOpacity, Text, TextInput, SafeAreaView, StyleSheet, Easing, Alert } from "react-native";
+import { View, TouchableOpacity, Text, TextInput, SafeAreaView, StyleSheet } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Image } from "expo-image"
 import { FIREBASE_AUTH } from "@/firebaseConfig";
@@ -36,6 +36,7 @@ export default function Login() {
             } else {
                 router.push('/(loja)')
             }
+
         }).catch((err) => {
             alert(err.message);
         });
@@ -63,7 +64,7 @@ export default function Login() {
                         style={styles.input}
                         onChangeText={setEmail}
                         value={email}
-                        placeholder="Digiteu seu E-mail"
+                        placeholder="Digite seu E-mail"
                         placeholderTextColor="#929394"
                         onFocus={() => setFocused(true)}
                     />

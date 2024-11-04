@@ -3,6 +3,7 @@ import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'fireb
 import { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { red } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
 interface User {
   id: string,

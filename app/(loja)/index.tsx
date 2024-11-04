@@ -1,83 +1,55 @@
 import { FIRESTORE_DB } from '@/firebaseConfig';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, Firestore, onSnapshot, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import { red } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
+import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image } from "expo-image"
+import placeholderImage from "@/assets/images/placeholderImage.png"
+import home from "@/assets/images/homeIco.png"
+import { router } from 'expo-router';
 
-interface User {
+interface Cloth {
   id: string,
-  name: string
+  nome: string,
+  estoque: number,
+  tamanho: number,
+  valor: number
 }
 
 export default function HomeScreen() {
 
-  const [users, setUsers] = useState<User[]>([]);
-  const [newUser, setNewUser] = useState('');
+  const [roupas, setRoupas] = useState<Cloth[]>([]) 
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(FIRESTORE_DB, "usuario"), (snapshot) => {
-        const userList: User[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as User[];
-        setUsers(userList);
+        const unsubscribe = onSnapshot(collection(FIRESTORE_DB, "Roupas"), (snapshot) => {
+        const clothList: Cloth[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Cloth[];
+        setRoupas(clothList);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const addUser = async () => {
-    if (newUser === "") {
-        Alert.alert("Por favor, insira um nome.");
-        return;
-    }
-    await addDoc(collection(FIRESTORE_DB, "usuario"), { name: newUser });
-    setNewUser('');
-  };
-
-  const deleteUser = async (id: string) => {
-    await deleteDoc(doc(FIRESTORE_DB, "usuario", id))
-  };
-
-
-  const updateUser = async (id: string) => {
-    if (newUser === "") {
-        Alert.alert("Por favor, insira um novo nome para o usuário.");
-        return;
-    }
-
-    const userRef = doc(FIRESTORE_DB, "usuario", id);
-
-    await updateDoc(userRef, {
-        name: newUser,
-    });
-
-    setNewUser('');
-  };
+  const logOff = () => {
+    router.push('/register')
+}
 
   return (
     <View style={styles.mainView}>
-      <Text style={styles.pageTitle}>CRUD</Text>
-      <TextInput
-          style={styles.input}
-          placeholder="Novo Usuário"
-          value={newUser}
-          onChangeText={setNewUser}
-      />
-      <TouchableOpacity style={styles.button} onPress={addUser}>
-          <Text style={styles.buttonText}>Adicionar</Text>
+      <TouchableOpacity style={styles.titleView} onPress={logOff}>
+        <Image source={home} style={styles.imageStyle}></Image>
       </TouchableOpacity>
+
       <FlatList
-        data={users}
+        data={roupas}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.userItem}>
-            <Text>{item.id}</Text>
-              <Text>{item.name}</Text>
-              <TouchableOpacity onPress={() => deleteUser(item.id)}>
-                  <Text style={styles.deleteButton}>Excluir</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => updateUser(item.id)}>
-                  <Text style={styles.deleteButton}>Atualizar</Text>
-              </TouchableOpacity>
+          <View style={styles.clothDesc}>
+            <Image source={placeholderImage} style={styles.imageStyle}></Image>
+            <View style={styles.cloth}>
+              <Text>{item.nome}</Text>
+              <Text>R${item.valor}</Text>
+              <Text>Tamanho: {item.tamanho}</Text>
+              <Text>Quantidade: {item.estoque}</Text>
+            </View>
           </View>
         )}
       />
@@ -87,54 +59,32 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
 
+  imageStyle: {
+    width: 200,
+    height: 150,
+    resizeMode: 'contain'
+  },
+
   mainView: {
-    overflow: 'visible',
-    padding: 10
-  },
-  
-  flatlist: {
-    overflow: 'scroll'
-  },
-  
-  pageTitle: {
     display: 'flex',
-    justifyContent: 'center'
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    height: 40,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-
-  button: {
-    backgroundColor: '#4b6beb',
-    height: 40,
-    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5,
+    marginTop: 50
   },
 
-  buttonText: {
-    color: '#fff',
+  cloth: {
+    left: 3
   },
 
-  userItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  clothDesc: {
+    marginBottom: 20
+  },
+
+  titleView: {
+    display: 'flex',
+    justifyContent: "center",
     alignItems: 'center',
-    padding: 20,
-    overflow: 'scroll',
-    gap: 50,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-
-  deleteButton: {
-    color: "#ff0000"
+    top: 0,
+    marginTop: 10
   },
 
 });

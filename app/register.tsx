@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link, router, useNavigation } from "expo-router";
+import { Link } from "expo-router";
 import { View, TouchableOpacity, Text, TextInput, SafeAreaView, StyleSheet, Easing, Alert, Modal, Pressable } from "react-native";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Image, ImageSource } from "expo-image"
 import { FIREBASE_AUTH } from "@/firebaseConfig";
 import Logo from "@/assets/images/SpotifyLogo.png"
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { rgbaColor } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 
 
 export default function Login() {
-
-    const sv = useSharedValue(10)
 
     const [email, setEmail] = useState('')
     const [modalVisible, setModalVisible] = useState(false);
